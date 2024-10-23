@@ -9,80 +9,122 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
- * Sample code to demonstrate how Cipher Algorithm modes of operation work.
- *
- * Input BMP Image is encrypted with DES and AES using different modes of operation.
+ * Demonstrates how Cipher Algorithm modes of operation (ECB and CBC) work
+ * for block cipher encryption algorithms like DES and AES.
+ * <p>
+ * An input BMP image is encrypted using DES and AES in different modes (ECB and CBC),
+ * and the encrypted image is saved as a new file.
+ * </p>
+ * <p>
+ * Note: ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are two common modes
+ * of operation for block ciphers. ECB processes each block independently, while CBC introduces
+ * chaining, meaning each block depends on the encryption of the previous block.
+ * </p>
  */
 public class ModesOfOperationApp {
 
-    // Folder to write output BMP Images
+    /**
+     * Path to the folder where encrypted BMP files will be saved.
+     * Adjust this path to a valid directory on your system.
+     */
     public static final String OUTPUT_FOLDER = "/Users/aborroy/Downloads/usj/tmp/";
 
-    // BMP Format length of header expressed in bytes
-    public static final Integer BMP_BYTE_HEADER_LENGTH = 54;
+    /**
+     * BMP header length in bytes (54 bytes for BMP images).
+     * The header is preserved unencrypted so that the image format remains valid.
+     */
+    public static final int BMP_BYTE_HEADER_LENGTH = 54;
 
-    // Input BMP file, loaded from "resources" folder
+    /**
+     * Input BMP file name (located in the resources folder).
+     * The file extension is removed to generate output file names for encrypted images.
+     */
     static String fileNameInput = "logo-usj.bmp";
     static String fileNameInputNoExt = fileNameInput.substring(0, fileNameInput.indexOf("."));
 
     /**
-     * Stores encrypted images for "fileNameInput" with different ciphers and different modes of operation
+     * Main method to demonstrate the encryption of a BMP image using DES and AES
+     * with different modes of operation (ECB and CBC).
+     * <p>
+     * The encrypted files will be saved with appropriate names indicating the cipher and mode used.
+     * </p>
+     *
+     * @param args command-line arguments (not used).
+     * @throws Exception if any cryptographic or I/O error occurs.
      */
     public static void main(String... args) throws Exception {
 
-        // Any other transformation for encryption operation may be used from:
-        // https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html
-
-        // DES cipher using ECB and CBC
+        // Encrypt the image using DES and AES ciphers with different modes of operation.
+        // ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are demonstrated.
         encrypt("DES/ECB/PKCS5Padding");
         encrypt("DES/CBC/PKCS5Padding");
 
-        // AES cipher using ECB and CBC
         encrypt("AES/ECB/PKCS5Padding");
         encrypt("AES/CBC/PKCS5Padding");
-
     }
 
     /**
-     * Creates a file applying the encryption operation specified
-     * @param transformation Any valid String for Ciphers in https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html
+     * Encrypts the input BMP image using the specified cipher transformation and saves the
+     * encrypted image as a new BMP file.
+     * <p>
+     * The BMP header is left unencrypted to ensure the output file can still be recognized
+     * as a valid BMP image. Only the image data (pixels) is encrypted.
+     * </p>
+     *
+     * @param transformation the cryptographic transformation to use (e.g., "DES/ECB/PKCS5Padding").
+     *                       The transformation string includes the algorithm, mode of operation, and padding scheme.
+     * @throws Exception if an error occurs during the encryption process.
      */
     private static void encrypt(String transformation) throws Exception {
 
-        // Create an instance for the Cipher
+        // Create a Cipher instance using the specified transformation.
         Cipher cipher = Cipher.getInstance(transformation);
-        SecretKey secret_key = KeyGenerator.getInstance(transformation.substring(0, 3)).generateKey();
-        cipher.init(Cipher.ENCRYPT_MODE, secret_key);
 
-        // Calculate fileName for the encrypted output file
+        // Extract the algorithm name from the transformation string (e.g., "DES" or "AES").
+        String algorithm = transformation.substring(0, transformation.indexOf("/"));
+
+        // Generate a secret key for the chosen algorithm (DES or AES).
+        SecretKey secretKey = KeyGenerator.getInstance(algorithm).generateKey();
+
+        // Initialize the Cipher in ENCRYPT_MODE with the generated secret key.
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+        // Determine the output file name based on the cipher and mode of operation.
         String fileNameOutput = getFileName(transformation);
 
-        // Load input file, create output file and create output stream for Cipher
+        // Load the input BMP file, prepare the output file, and apply the encryption.
         try (InputStream fileIn = ModesOfOperationApp.class.getClassLoader().getResourceAsStream(fileNameInput);
              FileOutputStream fileOut = new FileOutputStream(OUTPUT_FOLDER + fileNameOutput);
              CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
 
-            // Skip BMP header, so it can be opened after encryption operation
+            // Read the entire BMP file into a byte array.
             byte[] inputBmp = fileIn.readAllBytes();
-            byte[] header = Arrays.copyOfRange(inputBmp, 0, BMP_BYTE_HEADER_LENGTH + 1);
+
+            // Separate the BMP header (54 bytes) from the image data.
+            byte[] header = Arrays.copyOfRange(inputBmp, 0, BMP_BYTE_HEADER_LENGTH);
             byte[] imgData = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH, inputBmp.length);
+
+            // Write the unencrypted header to the output file.
             fileOut.write(header);
             fileOut.flush();
 
-            // Cipher data bits
+            // Encrypt and write the image data (the pixels) to the output file.
             cipherOut.write(imgData);
-
         }
-
     }
 
     /**
-     * Include cipher and mode of operation in file name from "tranformation" string
+     * Generates the output file name for the encrypted BMP image.
+     * The file name includes the original input file name, the cipher algorithm,
+     * and the mode of operation to clearly distinguish between different outputs.
+     *
+     * @param transformation the cryptographic transformation used (e.g., "DES/ECB/PKCS5Padding").
+     * @return the generated output file name.
      */
     private static String getFileName(String transformation) {
+        // Replace slashes ("/") in the transformation with dashes ("-") to create a valid file name.
         return fileNameInputNoExt + "-" +
-            transformation.substring(0, transformation.lastIndexOf("/")).replaceAll("/", "-") +
-            ".bmp";
+                transformation.substring(0, transformation.lastIndexOf("/")).replace("/", "-") +
+                ".bmp";
     }
-
 }
