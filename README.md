@@ -46,23 +46,33 @@ The encrypted images will be stored in the output folder specified by the `OUTPU
 Here are some sample images produced by the project, showing the original image and the images encrypted with different cipher modes:
 
 ### Original Image
+
 The input BMP image before encryption:
+
 ![original](src/main/resources/logo-usj.bmp)
 
 ### Encrypted Images
 
 #### DES Cipher with ECB Mode of Operation
+
 In ECB mode, each block of the image is encrypted independently, resulting in noticeable visual patterns when encrypting images:
+
 ![des-ecb](src/main/resources/generated-images/logo-usj-DES-ECB.bmp)
 
 #### AES Cipher with ECB Mode of Operation
+
 AES is a stronger cipher than DES, but ECB mode still shows patterns, which can make it unsuitable for some applications:
+
 ![aes-ecb](src/main/resources/generated-images/logo-usj-AES-ECB.bmp)
 
 #### DES Cipher with CBC Mode of Operation
+
 In CBC mode, each block depends on the encryption of the previous block, making the resulting encrypted image more secure and less predictable:
+
 ![des-cbc](src/main/resources/generated-images/logo-usj-DES-CBC.bmp)
 
 #### AES Cipher with CBC Mode of Operation
+
 AES combined with CBC mode results in a more secure encryption, and no discernible patterns are visible in the output image:
+
 ![aes-cbc](src/main/resources/generated-images/logo-usj-AES-CBC.bmp)
