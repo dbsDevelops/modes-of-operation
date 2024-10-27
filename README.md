@@ -1,6 +1,8 @@
 # Modes of Operation in Cryptography
 
-This project demonstrates how different cipher algorithm **modes of operation** work in cryptography.
+The project is based on a previous implementation done by my Cryptography tutor [angelborroy](https://github.com/angelborroy).
+
+This project demonstrates how different cipher algorithm **modes of operation** work in cryptography. 
 
 Specifically, it showcases the encryption of an input BMP image using **DES** and **AES** ciphers with the **ECB (Electronic Code Book)** and **CBC (Cipher Block Chaining)** modes of operation.
 
@@ -76,3 +78,41 @@ In CBC mode, each block depends on the encryption of the previous block, making 
 AES combined with CBC mode results in a more secure encryption, and no discernible patterns are visible in the output image:
 
 ![aes-cbc](src/main/resources/generated-images/logo-usj-AES-CBC.bmp)
+
+## Alternative: Run your project on Docker! 🐳
+
+We will create a Dockerfile following the next steps
+1. Start from a Maven Docker Image, we will use the default one
+2. Clone the project
+3. Run Maven to compile the project and download dependencies
+4. Create the container folder to store the output pictures (taken from Java source code)
+5. Run the application (according to README.md instructions)
+
+```bash
+# 1. Start from a Maven Docker Image
+FROM maven AS build
+
+# 2. Clone the project
+RUN git clone https://github.com/dbsDevelops/modes-of-operation.git
+
+# 3. Access our project and run Maven to compile the project and download dependencies
+RUN cd modes-of-operation && mvn clean package
+
+# 4. Create the container folder to store the ouput pictures (taken from Java source code)
+RUN mkdir -p /Users/danielbuxtonsierras/tmp 
+
+# 5. Run the application (according to README.md instructions)
+ENTRYPOINT ["java", "-cp", "/app/modes-of-operation/target/classes", "es.usj.crypto.cipher.ModesOfOperationApp"]
+```
+
+Once the Dockerfile is ready, build the Docker Image from your computer:
+```bash
+$ docker build . -t modes-of-operation
+```
+
+Run the Docker Image mapping the container output folder to a local folder in your computer (in the following sample, the mapping is using a local folder "output" as relative path):
+```bash
+$ docker run -v ./output:/Users/danielbuxtonsierras/tmp modes-of-operation
+```
+
+Finally, verify that the output images are stored in your local computer:
