@@ -4,6 +4,8 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -24,10 +26,11 @@ import java.util.Arrays;
 public class ModesOfOperationApp {
 
     /**
-     * Path to the folder where encrypted BMP files will be saved.
+     * Path to the folder where encrypted and decrypted BMP files will be saved.
      * Adjust this path to a valid directory on your system.
      */
-    public static final String OUTPUT_FOLDER = "/Users/aborroy/Downloads/usj/tmp/";
+    public static final String ENCRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/Desktop/USJ/4-USJ_CUARTO/FirstSemester/Cryptography/3-SymmetricEncryption/modes-of-operation/trials/encrypt/";
+    public static final String DECRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/Desktop/USJ/4-USJ_CUARTO/FirstSemester/Cryptography/3-SymmetricEncryption/modes-of-operation/trials/decrypt/";
 
     /**
      * BMP header length in bytes (54 bytes for BMP images).
@@ -53,14 +56,26 @@ public class ModesOfOperationApp {
      * @throws Exception if any cryptographic or I/O error occurs.
      */
     public static void main(String... args) throws Exception {
+        try {
+            // Encrypt the image using DES and AES ciphers with different modes of operation.
+            // ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are demonstrated.
+            SecretKey secretKeyDESECB = encrypt("DES/ECB/PKCS5Padding");
+            SecretKey secretKeyDESCBC = encrypt("DES/CBC/PKCS5Padding");
 
-        // Encrypt the image using DES and AES ciphers with different modes of operation.
-        // ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are demonstrated.
-        encrypt("DES/ECB/PKCS5Padding");
-        encrypt("DES/CBC/PKCS5Padding");
+            SecretKey secretKeyAESECB = encrypt("AES/ECB/PKCS5Padding");
+            SecretKey secretKeyAESCBC = encrypt("AES/CBC/PKCS5Padding");
 
-        encrypt("AES/ECB/PKCS5Padding");
-        encrypt("AES/CBC/PKCS5Padding");
+            // Decrypt the image using DES and AES ciphers with different modes of operation.
+            // ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are demonstrated.
+            decrypt("DES/ECB/PKCS5Padding", secretKeyDESECB);
+            decrypt("DES/CBC/PKCS5Padding", secretKeyDESCBC);
+
+            decrypt("AES/ECB/PKCS5Padding", secretKeyAESECB);
+            decrypt("AES/CBC/PKCS5Padding", secretKeyAESCBC);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 
     /**
@@ -75,7 +90,7 @@ public class ModesOfOperationApp {
      *                       The transformation string includes the algorithm, mode of operation, and padding scheme.
      * @throws Exception if an error occurs during the encryption process.
      */
-    private static void encrypt(String transformation) throws Exception {
+    private static SecretKey encrypt(String transformation) throws Exception {
 
         // Create a Cipher instance using the specified transformation.
         Cipher cipher = Cipher.getInstance(transformation);
@@ -94,7 +109,7 @@ public class ModesOfOperationApp {
 
         // Load the input BMP file, prepare the output file, and apply the encryption.
         try (InputStream fileIn = ModesOfOperationApp.class.getClassLoader().getResourceAsStream(fileNameInput);
-             FileOutputStream fileOut = new FileOutputStream(OUTPUT_FOLDER + fileNameOutput);
+             FileOutputStream fileOut = new FileOutputStream(ENCRYPT_OUTPUT_FOLDER + fileNameOutput);
              CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
 
             // Read the entire BMP file into a byte array.
@@ -103,6 +118,54 @@ public class ModesOfOperationApp {
             // Separate the BMP header (54 bytes) from the image data.
             byte[] header = Arrays.copyOfRange(inputBmp, 0, BMP_BYTE_HEADER_LENGTH);
             byte[] imgData = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH, inputBmp.length);
+
+            // Write the unencrypted header to the output file.
+            fileOut.write(header);
+            fileOut.flush();
+
+            // For CBC mode, we save the IV (Initialisation Vector) as the first 16 bytes of the file
+            if (transformation.contains("CBC")) {
+                byte[] iv = cipher.getIV();
+                fileOut.write(iv);  // Write IV at the beginning
+                fileOut.flush();
+            }
+
+            // Encrypt and write the image data (the pixels) to the output file.
+            cipherOut.write(imgData);
+        }
+
+        return secretKey;
+    }
+
+    private static void decrypt(String transformation, SecretKey secretKey) throws Exception {
+
+        // Create a Cipher instance using the specified transformation.
+        Cipher cipher = Cipher.getInstance(transformation);
+
+        // Determine the output file name based on the cipher and mode of operation.
+        String fileNameOutput = getFileName(transformation);
+
+        // Load the input BMP file, prepare the output file, and apply the encryption.
+        try (InputStream fileIn = ModesOfOperationApp.class.getClassLoader().getResourceAsStream(fileNameInput);
+             FileOutputStream fileOut = new FileOutputStream(DECRYPT_OUTPUT_FOLDER + fileNameOutput);
+             CipherOutputStream cipherOut = new CipherOutputStream(fileOut, cipher)) {
+
+            // Read the entire BMP file into a byte array.
+            byte[] inputBmp = fileIn.readAllBytes();
+
+            // Separate the BMP header (54 bytes) from the image data.
+            byte[] header = Arrays.copyOfRange(inputBmp, 0, BMP_BYTE_HEADER_LENGTH);
+            byte[] imgData = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH, inputBmp.length);
+
+            // Read and apply IV if using CBC
+            if (transformation.contains("CBC")) {
+                byte[] iv = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH, BMP_BYTE_HEADER_LENGTH + cipher.getBlockSize());
+                imgData = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH + iv.length, inputBmp.length);
+                cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            } else {
+                imgData = Arrays.copyOfRange(inputBmp, BMP_BYTE_HEADER_LENGTH, inputBmp.length);
+                cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            }
 
             // Write the unencrypted header to the output file.
             fileOut.write(header);
