@@ -78,3 +78,22 @@ In CBC mode, each block depends on the encryption of the previous block, making 
 AES combined with CBC mode results in a more secure encryption, and no discernible patterns are visible in the output image:
 
 ![aes-cbc](src/main/resources/generated-images/logo-usj-AES-CBC.bmp)
+
+## Alternative: Run your project on Docker! 🐳
+
+We will create a Dockerfile following the next steps
+1. Start from a Maven Docker Image, we will use the default one
+2. Clone the project
+3. Run Maven to compile the project and download dependencies
+4. Create the container folder to store the output pictures (taken from Java source code)
+5. Run the application (according to README.md instructions)
+
+```bash
+
+```
+
+Once the Dockerfile is ready, build the Docker Image from your computer
+
+Run the Docker Image mapping the container output folder to a local folder in your computer (in the following sample, the mapping is using a local folder "output" as relative path)
+
+Finally, verify that the output images are stored in your local computer:
