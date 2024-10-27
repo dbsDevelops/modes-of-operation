@@ -98,11 +98,12 @@ RUN git clone https://github.com/dbsDevelops/modes-of-operation.git
 # 3. Access our project and run Maven to compile the project and download dependencies
 RUN cd modes-of-operation && mvn clean package
 
-# 4. Create the container folder to store the ouput pictures (taken from Java source code)
-RUN mkdir -p /Users/danielbuxtonsierras/tmp 
+# 4. Create the container folder to store the output pictures (encrypted and decrypted)
+RUN mkdir -p /tmp/encrypt
+RUN mkdir /tmp/decrypt
 
 # 5. Run the application (according to README.md instructions)
-ENTRYPOINT ["java", "-cp", "/app/modes-of-operation/target/classes", "es.usj.crypto.cipher.ModesOfOperationApp"]
+ENTRYPOINT ["java", "-cp", "/modes-of-operation/target/classes", "es.usj.crypto.cipher.ModesOfOperationApp"]
 ```
 
 Once the Dockerfile is ready, build the Docker Image from your computer:
