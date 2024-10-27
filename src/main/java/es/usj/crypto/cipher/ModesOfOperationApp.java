@@ -29,8 +29,8 @@ public class ModesOfOperationApp {
      * Path to the folder where encrypted and decrypted BMP files will be saved.
      * Adjust this path to a valid directory on your system.
      */
-    public static final String ENCRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/Desktop/USJ/4-USJ_CUARTO/FirstSemester/Cryptography/3-SymmetricEncryption/modes-of-operation/trials/encrypt/";
-    public static final String DECRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/Desktop/USJ/4-USJ_CUARTO/FirstSemester/Cryptography/3-SymmetricEncryption/modes-of-operation/trials/decrypt/";
+    public static final String ENCRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/tmp/encrypt";
+    public static final String DECRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/tmp/decrypt";
 
     /**
      * BMP header length in bytes (54 bytes for BMP images).
