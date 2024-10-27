@@ -105,8 +105,14 @@ RUN mkdir -p /Users/danielbuxtonsierras/tmp
 ENTRYPOINT ["java", "-cp", "/app/modes-of-operation/target/classes", "es.usj.crypto.cipher.ModesOfOperationApp"]
 ```
 
-Once the Dockerfile is ready, build the Docker Image from your computer
+Once the Dockerfile is ready, build the Docker Image from your computer:
+```bash
+$ docker build . -t modes-of-operation
+```
 
-Run the Docker Image mapping the container output folder to a local folder in your computer (in the following sample, the mapping is using a local folder "output" as relative path)
+Run the Docker Image mapping the container output folder to a local folder in your computer (in the following sample, the mapping is using a local folder "output" as relative path):
+```bash
+$ docker run -v ./output:/Users/danielbuxtonsierras/tmp modes-of-operation
+```
 
 Finally, verify that the output images are stored in your local computer:
