@@ -117,7 +117,7 @@ $ docker run -v ./output:/Users/danielbuxtonsierras/tmp modes-of-operation
 
 Finally, verify that the output images are stored in your local computer:
 ```bash
-ls -l
+$ ls -l
 total 5120
 drwxr-xr-x  2 danielbuxtonsierras  staff      64 Oct 27 20:08 decrypt
 -rw-r--r--  1 danielbuxtonsierras  staff  323606 Oct 27 20:08 decryptlogo-usj-AES-CBC.bmp
