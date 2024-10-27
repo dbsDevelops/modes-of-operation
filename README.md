@@ -116,3 +116,17 @@ $ docker run -v ./output:/Users/danielbuxtonsierras/tmp modes-of-operation
 ```
 
 Finally, verify that the output images are stored in your local computer:
+```bash
+ls -l
+total 5120
+drwxr-xr-x  2 danielbuxtonsierras  staff      64 Oct 27 20:08 decrypt
+-rw-r--r--  1 danielbuxtonsierras  staff  323606 Oct 27 20:08 decryptlogo-usj-AES-CBC.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323622 Oct 27 20:08 decryptlogo-usj-AES-ECB.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323622 Oct 27 20:08 decryptlogo-usj-DES-CBC.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323630 Oct 27 20:08 decryptlogo-usj-DES-ECB.bmp
+drwxr-xr-x  2 danielbuxtonsierras  staff      64 Oct 27 20:08 encrypt
+-rw-r--r--  1 danielbuxtonsierras  staff  323670 Oct 27 20:08 encryptlogo-usj-AES-CBC.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323654 Oct 27 20:08 encryptlogo-usj-AES-ECB.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323654 Oct 27 20:08 encryptlogo-usj-DES-CBC.bmp
+-rw-r--r--  1 danielbuxtonsierras  staff  323646 Oct 27 20:08 encryptlogo-usj-DES-ECB.bmp
+```
