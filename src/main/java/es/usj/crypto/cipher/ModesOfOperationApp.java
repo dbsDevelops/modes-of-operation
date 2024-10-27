@@ -6,6 +6,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public class ModesOfOperationApp {
     public static final String ENCRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/tmp/encrypt";
     public static final String DECRYPT_OUTPUT_FOLDER = "/Users/danielbuxtonsierras/tmp/decrypt";
 
+    
     /**
      * BMP header length in bytes (54 bytes for BMP images).
      * The header is preserved unencrypted so that the image format remains valid.
@@ -57,6 +59,10 @@ public class ModesOfOperationApp {
      */
     public static void main(String... args) throws Exception {
         try {
+            // Ensure directories exist
+            new File(ENCRYPT_OUTPUT_FOLDER).mkdirs();
+            new File(DECRYPT_OUTPUT_FOLDER).mkdirs();
+
             // Encrypt the image using DES and AES ciphers with different modes of operation.
             // ECB (Electronic Code Book) and CBC (Cipher Block Chaining) are demonstrated.
             SecretKey secretKeyDESECB = encrypt("DES/ECB/PKCS5Padding");
