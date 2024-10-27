@@ -1,6 +1,8 @@
 # Modes of Operation in Cryptography
 
-This project demonstrates how different cipher algorithm **modes of operation** work in cryptography.
+The project is based on a previous implementation done by my Cryptography tutor [angelborroy](https://github.com/angelborroy).
+
+This project demonstrates how different cipher algorithm **modes of operation** work in cryptography. 
 
 Specifically, it showcases the encryption of an input BMP image using **DES** and **AES** ciphers with the **ECB (Electronic Code Book)** and **CBC (Cipher Block Chaining)** modes of operation.
 
