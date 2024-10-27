@@ -99,7 +99,7 @@ RUN git clone https://github.com/dbsDevelops/modes-of-operation.git
 RUN cd modes-of-operation && mvn clean package
 
 # 4. Create the container folder to store the ouput pictures (taken from Java source code)
-RUN mkdir -p /Users/danielbuxtonsierras/Desktop/USJ/4-USJ_CUARTO/FirstSemester/Cryptography/3-SymmetricEncryption/tmp 
+RUN mkdir -p /Users/danielbuxtonsierras/tmp 
 
 # 5. Run the application (according to README.md instructions)
 ENTRYPOINT ["java", "-cp", "/app/modes-of-operation/target/classes", "es.usj.crypto.cipher.ModesOfOperationApp"]
